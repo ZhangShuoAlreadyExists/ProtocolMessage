@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package tutorial;
+
+import "google/protobuf/any.proto";
+
+
+message proto_metadata {
+}
+
+message proto_general {
+    proto_metadata meta = 1;
+    bool compressed = 2;
+    google.protobuf.Any msg = 10;
+}
+
