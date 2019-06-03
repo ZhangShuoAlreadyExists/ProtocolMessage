@@ -13,21 +13,23 @@ public:
                                     tutorial::proto_metadata* meta, 
                                     bool compressed,
                                     const std::string *key,
-                                    void *msg_opaque);
+                                    void *msg_opaque) = 0;
 
     virtual ErrorCode produce_proto(const std::string topic_name,
                                     int32_t partition,
                                     int msgflags,
                                     google::protobuf::Message* msg,
+                                    tutorial::proto_metadata* meta,
+                                    bool compressed,
                                     const void *key,
                                     size_t key_len,
                                     int64_t timestamp,
-                                    void *msg_opaque);
+                                    void *msg_opaque) = 0;
 };
 
 class ProtobufProducer : public ProducerImpl, virtual ProtobufProducerInterface {
 public:
-    static ProtobufProducer* create (Conf *conf, std::string &errstr);
+    static ProtobufProducer* create(Conf *conf, std::string &errstr);
 };
 
 class ProtobufProducerImpl : public ProtobufProducer {
@@ -41,14 +43,16 @@ public:
 
     ErrorCode produce_proto (const std::string topic_name, int32_t partition,
                              int msgflags, google::protobuf::Message* msg,
+                             tutorial::proto_metadata* meta, bool compressed,
                              const void *key, size_t key_len,
                              int64_t timestamp, void *msg_opaque);
 };
 
 class ProtobufConsumerInterface {
-    google::protobuf::Message* consume_proto(Topic *topic, int32_t partition,
-                                             int timeout_ms);
-    google::protobuf::Message* consume_proto(Queue *queue, int timeout_ms);
+    bool consume_proto(Topic *topic, int32_t partition, int timeout_ms,
+                       google::protobuf::Message** msg,
+                       tutorial::proto_metadata *metadata);
+    //google::protobuf::Message* consume_proto(Queue *queue, int timeout_ms);
 };
 
 class ProtobufConsumer : public KafkaConsumerImpl, virtual ProtobufConsumerInterface {
@@ -58,9 +62,10 @@ public:
 
 class ProtobufConsumerImpl : public ProtobufConsumer {
 public:
-    google::protobuf::Message* consume(Topic *topic, int32_t partition,
-                                             int timeout_ms);
-    google::protobuf::Message* consume(Queue *queue, int timeout_ms);
+    bool consume_proto(Topic *topic, int32_t partition, int timeout_ms,
+                       google::protobuf::Message** msg,
+                       tutorial::proto_metadata** metadata);
+    //google::protobuf::Message* consume_proto(Queue *queue, int timeout_ms);
 };
 
 class ProtobufMessageInterface {

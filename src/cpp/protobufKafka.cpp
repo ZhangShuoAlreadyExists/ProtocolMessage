@@ -24,17 +24,24 @@ ErrorCode ProtobufProducerImpl::produce_proto(Topic *topic, int32_t partition,
 }
 
 
-/*
-ErrorCode ProtobufProducerImpl::produce (const std::string topic_name, int32_t partition,
-                   int msgflags, google::protobuf::Message* msg,
-                   const void *key, size_t key_len, int64_t timestamp,
-                   void *msg_opaque) {
+ErrorCode ProtobufProducerImpl::produce_proto(const std::string topic_name,
+                                              int32_t partition, int msgflags,
+                                              google::protobuf::Message* msg,
+                                              tutorial::proto_metadata* meta,
+                                              bool compressed, const void *key,
+                                              size_t key_len, int64_t timestamp,
+                                              void *msg_opaque) {
     return ERR_NO_ERROR;
 }
-*/
 
-ProtobufProducer *ProtobufProducer::create (RdKafka::Conf *conf,
+ProtobufProducer *ProtobufProducer::create(RdKafka::Conf *conf,
                                             std::string &errstr) {
+/*
+    Producer* producer = create(conf, errstr);
+    ProducerImpl * producer_impl = static_cast<ProducerImpl*>(producer);
+    ProtobufProducer* proto_producer = static_cast<ProtobufProducer*>(producer_impl);
+    return proto_producer;
+*/
     char errbuf[512];
     RdKafka::ConfImpl *confimpl = dynamic_cast<RdKafka::ConfImpl *>(conf);
     ProtobufProducerImpl *rkp = new ProtobufProducerImpl();
@@ -112,9 +119,26 @@ ProtobufConsumer* ProtobufConsumer::create(Conf *conf, std::string &errstr) {
     return rkc;
 };
 
-google::protobuf::Message* ProtobufConsumerImpl::consume_proto(Topic *topic, int32_t partition,
-                                             int timeout_ms);
-google::protobuf::Message* ProtobufConsumerImpl::consume_proto(Queue *queue, int timeout_ms);
+bool ProtobufConsumerImpl::consume_proto(Topic *topic, int32_t partition,
+                                         int timeout_ms,
+                                         google::protobuf::Message** msg,
+                                         tutorial::proto_metadata** metadata) {
+    tutorial::proto_general proto;
+    google::protobuf::Any* any;
+    std::string *data;
+
+    RdKafka::Message *kafka_msg = consume(timeout_ms);
+    data = static_cast<std::string*>(kafka_msg->payload());
+    if (!proto.ParseFromString(*data))
+        return NULL;
+    *metadata = proto.mutable_meta();
+    any = proto.mutable_msg();
+    any->UnpackTo(*msg);
+
+    return 0;
+}
+
+//google::protobuf::Message* ProtobufConsumerImpl::consume_proto(Queue *queue, int timeout_ms);
 
 
-
+ 

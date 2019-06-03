@@ -48,6 +48,7 @@ typedef int mode_t;
 
 namespace RdKafka {
 
+
 void consume_cb_trampoline(rd_kafka_message_t *msg, void *opaque);
 void log_cb_trampoline (const rd_kafka_t *rk, int level,
                         const char *fac, const char *buf);
@@ -1097,6 +1098,14 @@ class ProducerImpl : virtual public Producer, virtual public HandleImpl {
 
 };
 
+static void dr_msg_cb_trampoline (rd_kafka_t *rk,
+                                  const rd_kafka_message_t *
+                                  rkmessage,
+                                  void *opaque) {
+  RdKafka::HandleImpl *handle = static_cast<RdKafka::HandleImpl *>(opaque);
+  RdKafka::MessageImpl message(NULL, (rd_kafka_message_t *)rkmessage, false);
+  handle->dr_cb_->dr_cb(message);
+}
 
 
 }
