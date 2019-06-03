@@ -3,6 +3,20 @@
 
 using namespace RdKafka;
 
+int ProtobufToData(std::string *data, google::protobuf::Message* msg,
+                   tutorial::proto_metadata* meta, bool compressed) {
+    tutorial::proto_general proto;
+
+    tutorial::proto_metadata* proto_meta = proto.mutable_meta();
+    proto_meta->CopyFrom(*meta);
+    proto.set_compressed(compressed);
+    google::protobuf::Any* anymsg = proto.mutable_msg();
+    anymsg->PackFrom(*msg);
+
+    proto.SerializeToString(data);
+    return 0;
+}
+
 ErrorCode ProtobufProducerImpl::produce_proto(Topic *topic, int32_t partition,
                    int msgflags, google::protobuf::Message* msg,
                    tutorial::proto_metadata* meta, bool compressed,

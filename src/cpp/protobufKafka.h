@@ -4,6 +4,9 @@
 
 using namespace RdKafka;
 
+int ProtobufToData(std::string *data, google::protobuf::Message* msg,
+                   tutorial::proto_metadata* meta, bool compressed);
+
 class ProtobufProducerInterface {
 public:
     virtual ErrorCode produce_proto(Topic *topic,
