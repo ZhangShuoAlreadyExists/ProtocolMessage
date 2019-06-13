@@ -16,9 +16,13 @@ void test2(google::protobuf::Message* msg) {
 }
 
 class A {
+private:
+    int a1;
 public:
-    void func(int a) {
+    virtual void func(int a) {
+        a1 = 2;
         cout << "This is func(int a)\n";
+        cout << a1 << endl;
     }
     void func(int a, int b) {
         cout << "This is func(int a, int b)\n";
@@ -29,10 +33,17 @@ public:
 };
 
 class B : public A {
+private:
+    int b1;
 public:
-    void func(int a, int b, int c) {
+    void func(int a) {
         cout << "This is func(int a, int b, int c)\n";
         //func(b,c);
+    }
+    void funcB(void) {
+        b1 = 3;
+        cout << "This is funcB.\n";
+        cout << b1 << endl;
     }
 };
 
@@ -49,6 +60,7 @@ public:
 };
 
 int main(int argc, char* argv[]) {
+/*
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
     tutorial::proto_general general;
@@ -61,7 +73,13 @@ int main(int argc, char* argv[]) {
     }
 
     google::protobuf::ShutdownProtobufLibrary();
+*/
 
+    A *a = new A;
+    B *b = static_cast<B*>(a);
+    b->func(1);
+    b->func1(1);
+    b->funcB();
 /*
     B b = B();
     b.A::func(1);

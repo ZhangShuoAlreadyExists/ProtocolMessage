@@ -1,21 +1,49 @@
 #include "protobufKafka.h"
 #include "protobuf_general.pb.h"
+#include "StartServiceRequest.pb.h"
 
 using namespace RdKafka;
+using namespace std;
 
-int ProtobufToData(std::string *data, google::protobuf::Message* msg,
+int ProtobufToData(void **data, int *size, google::protobuf::Message* msg,
                    tutorial::proto_metadata* meta, bool compressed) {
     tutorial::proto_general proto;
+    std::string *str_msg = new std::string();
 
     tutorial::proto_metadata* proto_meta = proto.mutable_meta();
     proto_meta->CopyFrom(*meta);
     proto.set_compressed(compressed);
     google::protobuf::Any* anymsg = proto.mutable_msg();
     anymsg->PackFrom(*msg);
+    proto.SerializeToString(str_msg);
+    *data = (void*)str_msg->c_str();
+    *size = str_msg->size();
 
-    proto.SerializeToString(data);
     return 0;
 }
+
+void free_data(void **data) {
+    std::string *p = static_cast<std::string*>(*data);
+    delete p;
+    *data = NULL;
+}
+
+int ProtobufFromData(void *data, google::protobuf::Message* msg,
+                     tutorial::proto_metadata** metadata) {
+    tutorial::proto_general proto;
+    google::protobuf::Any *any;
+    std::string str_msg(static_cast<char*>(data));
+    bool ret;
+
+    if (!proto.ParseFromString(str_msg))
+        return -1;
+    *metadata = proto.mutable_meta();
+    any = proto.mutable_msg();
+    ret = any->UnpackTo(msg);
+
+    return 0;
+}
+
 
 ErrorCode ProtobufProducerImpl::produce_proto(Topic *topic, int32_t partition,
                    int msgflags, google::protobuf::Message* msg,

@@ -4,8 +4,11 @@
 
 using namespace RdKafka;
 
-int ProtobufToData(std::string *data, google::protobuf::Message* msg,
+int ProtobufToData(void **data, int *size, google::protobuf::Message* msg,
                    tutorial::proto_metadata* meta, bool compressed);
+
+int ProtobufFromData(void *data, google::protobuf::Message* msg,
+                     tutorial::proto_metadata** metadata);
 
 class ProtobufProducerInterface {
 public:

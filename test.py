@@ -51,7 +51,7 @@ def produce_image(p, topic):
         msg.version = 'latest'
         msg.sequence = i
 
-        p.send_proto(topic, key='msg', proto=msg)
+        p.send_proto(topic, key='msg', proto=msg, compress=False)
         time.sleep(1)
         i += 1
     print "produce quit"
@@ -67,7 +67,8 @@ def consume_image(c):
             print "get error."
             print e
             continue
-        print "receive message %s, sequence %d." % (msg.proto.__class__.__name__, msg.proto.sequence)
+        #print "receive message %s, sequence %d." % (msg.proto.__class__.__name__, msg.proto.sequence)
+        print msg.value
     return
 
 def sig_exit(signum, frame):
@@ -82,20 +83,26 @@ def sig_exit(signum, frame):
 def main():
     ip = "10.193.20.94"
     port = 9092
-    topic = 'shuo_test'
+    #topic = 'shuo_test100'
+    topic = 'topic_proto100'
 
     #p = KafkaProducer(bootstrap_servers='%s:9092' % ip)
     #c = KafkaConsumer(bootstrap_servers='%s:%d' % (ip, port), consumer_timeout_ms=2000)
     p = KafkaProtobufProducer(bootstrap_servers='%s:9092' % ip)
-    c = KafkaProtobufConsumer(bootstrap_servers='%s:%d' % (ip, port), consumer_timeout_ms=2000)
-    c.assign([TopicPartition(topic, 0)])
+    #c = KafkaProtobufConsumer(bootstrap_servers='%s:%d' % (ip, port), consumer_timeout_ms=20000)
+    c = KafkaConsumer(bootstrap_servers='%s:%d' % (ip, port), consumer_timeout_ms=20000)
+    partition = TopicPartition("users", 0)
+    #partition = TopicPartition("shuo_test100", 0)
+    c.assign([partition])
+    c.seek_to_beginning(partition)
+    #c.assign([TopicPartition(topic, 0)])
     #p = None
     #c = None
 
     c_thread = threading.Thread(name="consumer", target=consume_image, args=(c, ))
     c_thread.start()
-    p_thread = threading.Thread(name="producer", target=produce_image, args=(p, topic))
-    p_thread.start()
+    #p_thread = threading.Thread(name="producer", target=produce_image, args=(p, topic))
+    #p_thread.start()
 
     print "Press Ctrl+C to quit..."
     signal.signal(signal.SIGINT, sig_exit)

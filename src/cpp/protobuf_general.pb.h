@@ -162,11 +162,26 @@ class proto_metadata :
 
   // accessors -------------------------------------------------------
 
+  // string checksum = 1;
+  void clear_checksum();
+  static const int kChecksumFieldNumber = 1;
+  const ::std::string& checksum() const;
+  void set_checksum(const ::std::string& value);
+  #if LANG_CXX11
+  void set_checksum(::std::string&& value);
+  #endif
+  void set_checksum(const char* value);
+  void set_checksum(const char* value, size_t size);
+  ::std::string* mutable_checksum();
+  ::std::string* release_checksum();
+  void set_allocated_checksum(::std::string* checksum);
+
   // @@protoc_insertion_point(class_scope:tutorial.proto_metadata)
  private:
   class HasBitSetters;
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr checksum_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_protobuf_5fgeneral_2eproto;
 };
@@ -312,6 +327,59 @@ class proto_general :
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
 // proto_metadata
+
+// string checksum = 1;
+inline void proto_metadata::clear_checksum() {
+  checksum_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& proto_metadata::checksum() const {
+  // @@protoc_insertion_point(field_get:tutorial.proto_metadata.checksum)
+  return checksum_.GetNoArena();
+}
+inline void proto_metadata::set_checksum(const ::std::string& value) {
+  
+  checksum_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:tutorial.proto_metadata.checksum)
+}
+#if LANG_CXX11
+inline void proto_metadata::set_checksum(::std::string&& value) {
+  
+  checksum_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:tutorial.proto_metadata.checksum)
+}
+#endif
+inline void proto_metadata::set_checksum(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  checksum_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:tutorial.proto_metadata.checksum)
+}
+inline void proto_metadata::set_checksum(const char* value, size_t size) {
+  
+  checksum_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:tutorial.proto_metadata.checksum)
+}
+inline ::std::string* proto_metadata::mutable_checksum() {
+  
+  // @@protoc_insertion_point(field_mutable:tutorial.proto_metadata.checksum)
+  return checksum_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* proto_metadata::release_checksum() {
+  // @@protoc_insertion_point(field_release:tutorial.proto_metadata.checksum)
+  
+  return checksum_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void proto_metadata::set_allocated_checksum(::std::string* checksum) {
+  if (checksum != nullptr) {
+    
+  } else {
+    
+  }
+  checksum_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), checksum);
+  // @@protoc_insertion_point(field_set_allocated:tutorial.proto_metadata.checksum)
+}
 
 // -------------------------------------------------------------------
 
